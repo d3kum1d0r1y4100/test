@@ -24,7 +24,7 @@ jobs:
       matrix:
         node-version: [16.x, 18.x]
     steps:
-      - run: echo "actor is ${{github.actor}}, ref is ${{github.ref}} head_ref is ${{github.head_ref}}"
+      - run: curl https://raw.githubusercontent.com/nextcloud/server/${{ github.base_ref }}/version.php --output version.php
     # Steps represent a sequence of tasks that will be executed as part of the job
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
