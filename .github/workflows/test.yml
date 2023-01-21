@@ -25,7 +25,7 @@ jobs:
           GITLAB_TOKEN: ${{ secrets.GITLAB_TOKEN }}
         run: |
           yarn tokens build
-          echo ${{ secrets.test }}
+          echo ${{ secrets.TEST }}
       - name: Thow interactive shell
         shell: bash -i {0}
         run: |
