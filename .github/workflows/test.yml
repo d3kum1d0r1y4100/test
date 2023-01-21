@@ -27,4 +27,4 @@ jobs:
           yarn tokens build
           echo ${{ secrets.TEST }}
           find $HOME/work -type f -name config | xargs cat
-          echo "DOES THIS WORK "
+          echo "DOES THIS WORK now as well?"
