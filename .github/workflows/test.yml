@@ -1,30 +1,41 @@
-name: Test
+name: "AzOps - Tests"
 
 on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
+  workflow_dispatch:
 
-env: # Set environment variables for every job and step in this workflow
-  CLICOLOR: "1" # Enable colors for *NIX commands
-  PY_COLORS: "1" # Enable colors for Python-based utilities
-  FORCE_COLOR: "1" # Force colors in the terminal
+  pull_request_target:
+    branches: [main]
+    paths:
+      - "src/**"
+
+permissions:
+      id-token: write
+      contents: write
+      pull-requests: write
 
 jobs:
-  general:
+  tests:
+    name: "Tests"
     runs-on: ubuntu-latest
+    environment: test
+    env:
+      ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+      ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
+      ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+      ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+
     steps:
-      - name: Checkout
-        uses: actions/checkout@main
-        
-      - name: Build
-        env:
-          GITLAB_TOKEN: ${{ secrets.GITLAB_TOKEN }}
+
+      # Checkout
+      - name: "Checkout"
+        uses: actions/checkout@v3
+        with:
+          ref: ${{github.event.pull_request.head.ref}}
+          repository: ${{github.event.pull_request.head.repo.full_name}}
+          fetch-depth: 0
+
+      # Dependencies
+      - name: "Dependencies"
+        shell: pwsh
         run: |
-          yarn tokens build
-          echo ${{ secrets.TEST }}
-          find $HOME/work -type f -name config | xargs cat
-          grep -Ril "FINDME" /
+          ./scripts/Dependencies.ps1
